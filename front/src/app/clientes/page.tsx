@@ -98,7 +98,7 @@ export default function ClientesPage() {
           </Link>
         </div>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-          <h2 className="text-2xl font-bold text-white">Clientes</h2>
+          <h2 className="text-2xl font-bold text-black">Clientes</h2>
           <Link
             href="/clientes/novo"
             className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold shadow transition"

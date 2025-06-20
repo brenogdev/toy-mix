@@ -42,10 +42,12 @@ router.post('/register', async (req, res) => {
 
     const passwordHash = await bcrypt.hash(password, 10);
     
-    const [userId] = await knex('users').insert({
-      username,
-      password_hash: passwordHash
-    });
+    const [userId] = await knex('users')
+      .insert({
+        username,
+        password_hash: passwordHash
+      })
+      .returning('id');
 
     const token = jwt.sign({ id: userId, username }, process.env.JWT_SECRET, {
       expiresIn: '24h'

@@ -1,12 +1,12 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../context/AuthContext";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import api from "@/services/api";
 import {
   Form,
   FormField,
@@ -26,10 +26,10 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-export default function LoginPage() {
-  const { login } = useAuth();
+export default function RegisterPage() {
   const router = useRouter();
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { username: "", password: "" },
@@ -37,14 +37,16 @@ export default function LoginPage() {
 
   const onSubmit = async (data: FormData) => {
     setError("");
-    const ok = await login(data.username, data.password);
-    if (ok) {
-      toast.success("Login realizado com sucesso!");
-      router.push("/clientes");
-    } else {
-      setError("Usuário ou senha inválidos");
-      toast.error("Usuário ou senha inválidos");
+    setLoading(true);
+    try {
+      await api.post("/auth/register", data);
+      toast.success("Usuário cadastrado com sucesso! Faça login.");
+      router.push("/login");
+    } catch (err: any) {
+      setError(err?.response?.data?.error || "Erro ao cadastrar usuário");
+      toast.error(err?.response?.data?.error || "Erro ao cadastrar usuário");
     }
+    setLoading(false);
   };
 
   return (
@@ -57,12 +59,15 @@ export default function LoginPage() {
             className="flex flex-col gap-6"
           >
             <div className="mb-2">
-              <Link href="/" className="text-blue-600 hover:underline text-sm">
-                ← Voltar para início
+              <Link
+                href="/login"
+                className="text-blue-600 hover:underline text-sm"
+              >
+                ← Voltar para login
               </Link>
             </div>
             <h2 className="text-2xl font-bold text-gray-800 text-center">
-              Entrar
+              Criar conta
             </h2>
             <FormField
               control={form.control}
@@ -97,17 +102,12 @@ export default function LoginPage() {
             {error && (
               <div className="text-red-600 text-sm text-center">{error}</div>
             )}
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Entrando..." : "Entrar"}
+            <Button
+              type="submit"
+              disabled={form.formState.isSubmitting || loading}
+            >
+              {loading ? "Cadastrando..." : "Cadastrar"}
             </Button>
-            <div className="text-center mt-2">
-              <Link
-                href="/register"
-                className="text-blue-600 hover:underline text-sm"
-              >
-                Criar conta
-              </Link>
-            </div>
           </form>
         </Form>
       </Card>
