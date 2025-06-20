@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "npx jest --runInBand --detectOpenHandles --verbose",
     "test:watch": "jest --watch",
     "start": "node src/app.js",
     "dev": "nodemon src/app.js"

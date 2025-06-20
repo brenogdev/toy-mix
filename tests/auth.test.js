@@ -24,7 +24,7 @@ describe('Autenticação', () => {
       await knex('users').insert({
         username: 'testuser',
         password_hash: 'hash'
-      });
+      }).returning('id');
 
       const response = await request(app)
         .post('/auth/register')
@@ -45,7 +45,7 @@ describe('Autenticação', () => {
       await knex('users').insert({
         username: 'testuser',
         password_hash: passwordHash
-      });
+      }).returning('id');
     });
 
     it('deve fazer login com credenciais válidas', async () => {

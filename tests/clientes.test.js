@@ -12,7 +12,7 @@ beforeAll(async () => {
   const [userId] = await knex('users').insert({
     username: 'testuser',
     password_hash: passwordHash
-  });
+  }).returning('id');
 
   authToken = jwt.sign({ id: userId, username: 'testuser' }, process.env.JWT_SECRET || 'supersecretjwt');
 });
@@ -28,7 +28,7 @@ describe('Clientes', () => {
       await knex('clientes').insert([
         { nome: 'Ana Beatriz', email: 'ana@example.com', nascimento: '1992-05-01' },
         { nome: 'Carlos Eduardo', email: 'carlos@example.com', nascimento: '1987-08-15' }
-      ]);
+      ]).returning('id');
     });
 
     it('deve listar todos os clientes', async () => {
@@ -96,7 +96,7 @@ describe('Clientes', () => {
         nome: 'Maria Silva',
         email: 'maria@example.com',
         nascimento: '1995-03-20'
-      });
+      }).returning('id');
       clienteId = id;
     });
 
@@ -133,7 +133,7 @@ describe('Clientes', () => {
         nome: 'Pedro Santos',
         email: 'pedro@example.com',
         nascimento: '1988-12-25'
-      });
+      }).returning('id');
       clienteId = id;
     });
 
